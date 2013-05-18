@@ -1,0 +1,4 @@
+*.py[cod]
+
+# emacs and vim backups
+*~
