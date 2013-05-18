@@ -1,10 +1,8 @@
 import template
 import argparse
-from bottle import route, run, static_file, error, abort, redirect
+from bottle import route, run, static_file, error, abort, redirect, get, post
 
 import os
-
-POSTS_DIR = './posts'
 
 class Page(object):
 	def __init__(self, url, title):
@@ -12,6 +10,7 @@ class Page(object):
 		self.title = title
 pages = [
 	Page('/', 'Home'),
+	Page('/nominate', 'Nominate'),
 	]
 
 @route('/css/<filename:re:.*\\.css>')
@@ -30,9 +29,23 @@ def serve_js(filename):
 def index():
 	return template.render("index.html", {'pages': pages, 'page': pages[0]})
 
-@route('/<something:path>/')
-def slash_redir(something):
+@get('/nominate')
+def nominate_get():
+	return template.render("nominate.html", {'pages': pages, 'page': pages[1]})
+
+@post('/nominate')
+def nominate_post():
+	return template.render("nominate.html", {'pages': pages, 'page': pages[1]})
+
+
+@get('/<something:path>/')
+def slash_redir_get(something):
 	redirect("/" + something)
+
+@post('/<something:path>/')
+def slash_redir_post(something):
+	redirect("/" + something)
+
 
 if __name__ == '__main__':
 	arg_parser = argparse.ArgumentParser(
