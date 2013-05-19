@@ -21,7 +21,7 @@ def serve_static(filename):
 def serve_css(filename):
 	return static_file(filename, root='./css', mimetype='text/css')
 
-@route('/css/<filename:re:.*\\.js>')
+@route('/js/<filename:re:.*\\.js>')
 def serve_js(filename):
 	return static_file(filename, root='./js', mimetype='application/javascript')
 
