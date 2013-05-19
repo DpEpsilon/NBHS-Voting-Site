@@ -13,6 +13,10 @@ pages = [
 	Page('/nominate', 'Nominate'),
 	]
 
+@route('/static/<filename:path>')
+def serve_static(filename):
+	return static_file(filename, root='./static')
+
 @route('/css/<filename:re:.*\\.css>')
 def serve_css(filename):
 	return static_file(filename, root='./css', mimetype='text/css')
