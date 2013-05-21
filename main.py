@@ -1,6 +1,9 @@
 import template
+import database_engine
+
 import argparse
-from bottle import route, run, static_file, error, abort, redirect, get, post
+from bottle import route, run, static_file, error,\
+	abort, redirect, get, post, request
 
 import os
 
@@ -39,8 +42,9 @@ def nominate_get():
 
 @post('/nominate')
 def nominate_post():
+	#print request.forms.get('leadership_experience')
+	#print request.forms.get('why')
 	return template.render("nominate.html", {'pages': pages, 'page': pages[1]})
-
 
 @get('/<something:path>/')
 def slash_redir_get(something):
@@ -62,6 +66,8 @@ if __name__ == '__main__':
 							help="Port for server to listen on "
 							"(default: 8080).")
 	args = arg_parser.parse_args().__dict__
+
+	database_engine.init_db()
 	
 	if not args['port'].isdigit():
 		arg_parser.print_usage()
