@@ -28,9 +28,9 @@ def serve_css(filename):
 def serve_js(filename):
 	return static_file(filename, root='./js', mimetype='application/javascript')
 
-#@route('/favicon.ico')
-#def favicon():
-#	return static_file('favicon.ico', root='./', mimetype='image/x-icon')
+@route('/favicon.ico')
+def favicon():
+	return static_file('favicon.ico', root='./', mimetype='image/x-icon')
 
 @route('/')
 def index():
