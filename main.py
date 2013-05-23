@@ -56,7 +56,7 @@ def login_get():
 @post('/login')
 def login_post():
 	cookie = cookies.give_cookie(request.forms.get('username'))
-	response.set_cookie("login", cookie, max_age=12*60*60)
+	response.set_cookie("login", cookie, max_age=cookies.expire_time)
 	redirect("/")
 
 @get('/<something:path>/')
