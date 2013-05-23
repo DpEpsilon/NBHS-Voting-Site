@@ -77,15 +77,11 @@ def is_valid_login(username, password):
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    cursor.execute("""SELECT password FROM users WHERE username = ?""", [username])
-    temp_hash = hash_password(password)
-    has_user = has_pass = 0
-    for entry in cursor:
-    	has_user = 1;
-    	if temp_hash == entry[0]:
-    		has_pass = 1;
-    if has_user and has_pass:
+    query = cursor.execute("""SELECT password FROM users WHERE username = ?""", [username]).fetchone()
+
+    if not query:
+    	return 2
+    if query[0] == hash_password(password):
     	return 0
-    if has_user:
+    else:
     	return 1
-    return 2
