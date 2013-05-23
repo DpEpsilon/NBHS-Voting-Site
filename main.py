@@ -34,7 +34,9 @@ def favicon():
 
 @route('/')
 def index():
-	return template.render("index.html", {'pages': pages, 'page': pages[0]})
+	return template.render("index.html", {'pages': pages, 'page': pages[0],
+										  'status': 'nominations',
+										  'has_voted': True})
 
 @get('/nominate')
 def nominate_get():

@@ -6,8 +6,39 @@
 	{% include navbar.html %}
 
     <div class="container">
-	  
-	  Nothing has been implemented, sorry.
+	  <div class="row">
+		<div class="span6" style="height:100%;">
+		  <h1>NBHS SRC {% if status == 'nominations' %}Nominations{% else %}Voting{% end if %}</h1>
+		  <p>
+			Welcome to the SRC nominations and voting site.
+		  </p>
+		  <h2>
+			{% if status == 'nominations' %}
+			<span style="color:#00dd00">Nominations are currently open.</span>
+			{% else %}{% if status == 'voting' %}
+			<span style="color:#00dd00">Voting is currently open.</span>
+			{% else %}
+			<span style="color:#dd0000">Voting is currently closed.</span>
+			{% end if %}{% end if %}
+		  </h2>
+		</div>
+		<div class="span6">
+		  {% if status == 'nominations' %}
+		  <h2 class="page-header">Pending Requests for Nominations</h2>
+
+		  <!-- Pending requests will go here... -->
+		  
+		  {% else %}
+		  <p style="font-size:32pt">
+			{% if not has_voted %}
+			You have not yet voted.
+			{% else %}
+			You have already cast your vote.
+			{% end if %}
+		  </p>
+		  {% end if %}
+		</div>
+	  </div>
 	  
 	  <hr>
 	  {*
