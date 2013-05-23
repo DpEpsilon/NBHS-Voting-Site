@@ -9,5 +9,4 @@ Pretty destitute codebase right now.
 Dependencies
 ------------
 
-Requires argparse (we may swap the optparse module in for
-convenience).
+Requires argparse.
