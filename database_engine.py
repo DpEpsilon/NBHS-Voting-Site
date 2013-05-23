@@ -32,7 +32,7 @@ def init_db():
 		create_nominators_table(cursor)
 	
 		
-	connection.close()
+	#connection.close()
 	
 def create_users_table(cursor):
 	print "INFO: Creating users table"

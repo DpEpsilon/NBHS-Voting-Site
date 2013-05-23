@@ -4,10 +4,19 @@
   <body>
     
     {% include navbar.html %}
+
+    <p style="color:red; font-size:16pt">
+      {% if valid == 1 %}
+      Password does not match
+      {% else %} {% if valid == 2 %}
+      Username does not exist
+      {% end if %}{% end if %}
+    </p>
+
     <div class="container">
       
       <form method="post" action="/login">
-        <h5>Username (Same as network/email login)</h5>
+        <h5>Username (Same as det login)</h5>
         <textarea name='username' style='width: 100px; height: 25px'></textarea>
         <br>
         <h5>Password (Student number)</h5>

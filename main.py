@@ -1,6 +1,7 @@
 import template
 import database_engine
 import cookies
+import user
 
 import argparse
 from bottle import route, run, static_file, error,\
@@ -52,12 +53,18 @@ def nominate_post():
 
 @get('/login')
 def login_get():
-	return template.render("login.html", {'pages': pages, 'page': pages[2]})
+	return template.render("login.html", {'pages': pages, 'page': pages[2],
+											'valid': 0})
 @post('/login')
 def login_post():
-	cookie = cookies.give_cookie(request.forms.get('username'))
-	response.set_cookie("login", cookie, max_age=cookies.expire_time)
-	redirect("/")
+	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
+	if validity == 0: # Success		
+		cookie = cookies.give_cookie(request.forms.get('username'))
+		response.set_cookie("login", cookie, max_age=cookies.expire_time)
+		redirect("/")
+	else:
+		return template.render("login.html", {'pages': pages, 'page': pages[2],
+												'valid': validity})
 
 @get('/<something:path>/')
 def slash_redir_get(something):

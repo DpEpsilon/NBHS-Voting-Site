@@ -72,12 +72,20 @@ def get_user(user):
 def is_valid_login(username, password):
     """
     Checks if a username, password pair match.
-    If they do returns True, if not returns False.
+    Returns 0 if they do, 1 if pass doesn't match, 2 if username doesn't exist
     """
-    connection = database_engine.Get_DatabaseConnection()
+    connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("""SELECT userid FROM users WHERE username = ? AND password = ?""", (username, hash_password(password)))
-    if curs.fetchone():
-        return True
-    else:
-        return False
+
+    cursor.execute("""SELECT password FROM users WHERE username = ?""", [username])
+    temp_hash = hash_password(password)
+    has_user = has_pass = 0
+    for entry in cursor:
+    	has_user = 1;
+    	if temp_hash == entry[0]:
+    		has_pass = 1;
+    if has_user and has_pass:
+    	return 0
+    if has_user:
+    	return 1
+    return 2
