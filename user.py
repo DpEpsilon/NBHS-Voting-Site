@@ -77,7 +77,9 @@ def is_valid_login(username, password):
     connection = get_db_connection()
     cursor = connection.cursor()
 
-    query = cursor.execute("""SELECT password FROM users WHERE username = ?""", [username]).fetchone()
+	username = username.lower() # Case insensitivity.
+	
+    query = cursor.execute("""SELECT password FROM users WHERE username = ?""", (username,)).fetchone()
 
     if not query:
     	return 2
