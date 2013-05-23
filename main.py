@@ -37,9 +37,21 @@ def favicon():
 
 @route('/')
 def index():
+
+	# See if they are logged in. If so display their name
+	name = None
+	cookie = request.get_cookie("login")
+	if cookie is not None:
+		login_id = cookies.getid(cookie)
+		if login_id is not None:
+			curr_user = user.get_user(login_id)
+			if curr_user is not None:
+				name = curr_user.firstname + ' ' + curr_user.lastname
+
 	return template.render("index.html", {'pages': pages, 'page': pages[0],
 										  'status': 'nominations',
-										  'has_voted': True})
+										  'has_voted': True,
+										  'name': name})
 
 @get('/nominate')
 def nominate_get():
