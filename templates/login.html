@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include head.html %}
+  <body>
+    
+    {% include navbar.html %}
+    <div class="container">
+      
+      <form method="post" action="/login">
+        <h5>Username (Same as network/email login)</h5>
+        <textarea name='username' style='width: 100px; height: 25px'></textarea>
+        <br>
+        <h5>Password (Student number)</h5>
+        <textarea name='password' style='width: 100px; height: 25px'></textarea>
+        <br>
+        <input type='submit' value="Login">
+      </form>
+      
+      <hr>
+      {*
+      <footer class="footer">
+      </footer>
+      *}
+    </div> <!-- /container -->
+
+    {% include scripts.html %}
+
+  </body>
+</html>

@@ -1,9 +1,10 @@
 import template
 import database_engine
+import cookies
 
 import argparse
 from bottle import route, run, static_file, error,\
-	abort, redirect, get, post, request
+	abort, redirect, get, post, request, response
 
 import os
 
@@ -14,6 +15,7 @@ class Page(object):
 pages = [
 	Page('/', 'Home'),
 	Page('/nominate', 'Nominate'),
+	Page('/login', 'Login')
 	]
 
 @route('/static/<filename:path>')
@@ -47,6 +49,15 @@ def nominate_post():
 	#print request.forms.get('leadership_experience')
 	#print request.forms.get('why')
 	return template.render("nominate.html", {'pages': pages, 'page': pages[1]})
+
+@get('/login')
+def login_get():
+	return template.render("login.html", {'pages': pages, 'page': pages[2]})
+@post('/login')
+def login_post():
+	cookie = cookies.give_cookie(request.forms.get('username'))
+	response.set_cookie("login", cookie, max_age=12*60*60)
+	redirect("/")
 
 @get('/<something:path>/')
 def slash_redir_get(something):
