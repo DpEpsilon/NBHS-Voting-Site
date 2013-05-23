@@ -70,20 +70,20 @@ def get_user(user):
 							nominees_table_row[1]))
 
 def is_valid_login(username, password):
-    """
-    Checks if a username, password pair match.
-    Returns 0 if they do, 1 if pass doesn't match, 2 if username doesn't exist
-    """
-    connection = get_db_connection()
-    cursor = connection.cursor()
+	"""
+	Checks if a username, password pair match.
+	Returns 0 if they do, 1 if pass doesn't match, 2 if username doesn't exist
+	"""
+	connection = get_db_connection()
+	cursor = connection.cursor()
 
 	username = username.lower() # Case insensitivity.
 	
-    query = cursor.execute("""SELECT password FROM users WHERE username = ?""", (username,)).fetchone()
+	query = cursor.execute("""SELECT password FROM users WHERE username = ?""", (username,)).fetchone()
 
-    if not query:
-    	return 2
-    if query[0] == hash_password(password):
-    	return 0
-    else:
-    	return 1
+	if not query:
+		return 2
+	if query[0] == hash_password(password):
+		return 0
+	else:
+		return 1
