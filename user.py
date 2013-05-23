@@ -1,5 +1,7 @@
 import sqlite3
-from databse_engine import get_db_connection
+from database_engine import get_db_connection
+
+import hashlib
 
 class User(object):
 	def __init__(self, userid, password, firstname, lastname,\
@@ -21,7 +23,15 @@ class NomineeInfo(object):
 		self.experience = experience
 		self.why = why
 
+def hash_password(password):
+	# sha512 may be overkill
+    return hashlib.sha512(password).hexdigest()
+		
 def get_user(user):
+	"""
+	Takes a userid or username.
+	Returns the user to which the userid or username corresponds.
+	"""
 	if user is None:
 		return None
 		
@@ -59,3 +69,15 @@ def get_user(user):
 				NomineeInfo(nominees_table_row[0],
 							nominees_table_row[1]))
 
+def is_valid_login(username, password):
+    """
+    Checks if a username, password pair match.
+    If they do returns True, if not returns False.
+    """
+    connection = database_engine.Get_DatabaseConnection()
+    cursor = connection.cursor()
+    cursor.execute("""SELECT userid FROM users WHERE username = ? AND password = ?""", (username, hash_password(password)))
+    if curs.fetchone():
+        return True
+    else:
+        return False
