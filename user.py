@@ -4,9 +4,10 @@ from database_engine import get_db_connection
 import hashlib
 
 class User(object):
-	def __init__(self, userid, password, firstname, lastname,\
+	def __init__(self, userid, username, password, firstname, lastname,\
 					 student_info=None, nominee_info=None):
 		self.userid = userid
+		self.username = username
 		self.password = password
 		self.firstname = firstname
 		self.lastname = lastname
@@ -50,7 +51,7 @@ def get_user(user):
 	user_table_row = cursor.fetchone()
 	if user_table_row is None:
 		return None
-
+	print user_table_row
 	userid = user_table_row[0]
 	
 	cursor.execute("select year, house from students "
@@ -60,14 +61,23 @@ def get_user(user):
 				   "where userid = ?", (userid,))
 	nominees_table_row = cursor.fetchone()
 
+	student_info = None
+	if student_table_row is not None:
+		student_info = StudentInfo(student_table_row[0],
+							student_table_row[1])
+	nominee_info = None
+	if nominees_table_row is not None:
+		nominee_info = NomineeInfo(nominees_table_row[0],
+							nominees_table_row[1])
+
 	return User(user_table_row[0],
 				user_table_row[1],
 				user_table_row[2],
 				user_table_row[3],
-				StudentInfo(student_table_row[0],
-							student_table_row[1]),
-				NomineeInfo(nominees_table_row[0],
-							nominees_table_row[1]))
+				user_table_row[4],
+				student_info,
+				nominee_info
+	)
 
 def is_valid_login(username, password):
     """
@@ -81,7 +91,7 @@ def is_valid_login(username, password):
 
     if not query:
     	return 2
-    if query[0] == hash_password(password):
+    if query[0] == password:
     	return 0
     else:
     	return 1

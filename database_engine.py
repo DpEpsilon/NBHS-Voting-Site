@@ -30,6 +30,9 @@ def init_db():
 		create_nominees_table(cursor)
 	if 'nominators' not in table_names:
 		create_nominators_table(cursor)
+
+	cursor.execute("""INSERT INTO users (username, password, firstname, lastname)
+			VALUES ('supbro', 'pass', 'abyss', 'maul');""")
 	
 		
 	#connection.close()

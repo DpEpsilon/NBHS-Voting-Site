@@ -41,13 +41,14 @@ def index():
 	# See if they are logged in. If so display their name
 	name = None
 	cookie = request.get_cookie("login")
+	print "rec: " + str(cookie)
 	if cookie is not None:
-		login_id = cookies.getid(cookie)
+		login_id = cookies.get_id(cookie)
 		if login_id is not None:
 			curr_user = user.get_user(login_id)
 			if curr_user is not None:
 				name = curr_user.firstname + ' ' + curr_user.lastname
-
+	print name
 	return template.render("index.html", {'pages': pages, 'page': pages[0],
 										  'status': 'nominations',
 										  'has_voted': True,
@@ -65,15 +66,19 @@ def nominate_post():
 
 @get('/login')
 def login_get():
+	print request.get_cookie("login")
 	return template.render("login.html", {'pages': pages, 'page': pages[2],
 											'valid': 0})
 @post('/login')
 def login_post():
 	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
+	print validity
 	if validity == 0: # Success		
 		cookie = cookies.give_cookie(request.forms.get('username'))
+		print cookie
 		response.set_cookie("login", cookie, max_age=cookies.expire_time)
-		redirect("/")
+		return template.render("login.html", {'pages': pages, 'page': pages[2],
+												'valid': 0})
 	else:
 		return template.render("login.html", {'pages': pages, 'page': pages[2],
 												'valid': validity})
