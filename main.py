@@ -19,6 +19,15 @@ pages = [
 	Page('/login', 'Login')
 	]
 
+def process_cookie(cookie):
+	# See if they are logged in. If so display their name
+	curr_user = None
+	if cookie is not None:
+		login_id = cookies.get_id(cookie)
+		if login_id is not None:
+			curr_user = user.get_user(login_id)
+	return curr_user
+
 @route('/static/<filename:path>')
 def serve_static(filename):
 	return static_file(filename, root='./static')
@@ -37,18 +46,7 @@ def favicon():
 
 @route('/')
 def index():
-
-	# See if they are logged in. If so display their name
-	name = None
-	cookie = request.get_cookie("login")
-	print "rec: " + str(cookie)
-	if cookie is not None:
-		login_id = cookies.get_id(cookie)
-		if login_id is not None:
-			curr_user = user.get_user(login_id)
-			if curr_user is not None:
-				name = curr_user.firstname + ' ' + curr_user.lastname
-	print name
+	name = user.get_fullname(process_cookie(request.get_cookie("login")))
 	return template.render("index.html", {'pages': pages, 'page': pages[0],
 										  'status': 'nominations',
 										  'has_voted': True,
@@ -56,32 +54,46 @@ def index():
 
 @get('/nominate')
 def nominate_get():
-	return template.render("nominate.html", {'pages': pages, 'page': pages[1]})
+	name = user.get_fullname(process_cookie(request.get_cookie("login")))
+	return template.render("nominate.html", {'pages': pages, 'page': pages[1],
+											'name': name})
 
 @post('/nominate')
 def nominate_post():
 	#print request.forms.get('leadership_experience')
 	#print request.forms.get('why')
-	return template.render("nominate.html", {'pages': pages, 'page': pages[1]})
+	name = user.get_fullname(process_cookie(request.get_cookie("login")))
+	return template.render("nominate.html", {'pages': pages, 'page': pages[1],
+											'name': name})
 
 @get('/login')
 def login_get():
-	print request.get_cookie("login")
+	name = user.get_fullname(process_cookie(request.get_cookie("login")))
 	return template.render("login.html", {'pages': pages, 'page': pages[2],
-											'valid': 0})
+											'valid': 0,
+											'name': name})
 @post('/login')
 def login_post():
 	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
-	print validity
+	name = user.get_fullname(process_cookie(request.get_cookie("login")))
 	if validity == 0: # Success		
 		cookie = cookies.give_cookie(request.forms.get('username'))
 		print cookie
 		response.set_cookie("login", cookie, max_age=cookies.expire_time)
 		return template.render("login.html", {'pages': pages, 'page': pages[2],
-												'valid': 0})
+												'valid': 0,
+												'name': name})
 	else:
 		return template.render("login.html", {'pages': pages, 'page': pages[2],
-												'valid': validity})
+												'valid': validity,
+												'name': name})
+
+@post('/logout')
+def logout_post():
+	cookie = request.get_cookie("login")
+	if cookie is not None:
+		cookies.remove_cookie(cookie)
+	redirect("/")
 
 @get('/<something:path>/')
 def slash_redir_get(something):

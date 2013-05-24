@@ -1,5 +1,5 @@
 import sqlite3
-from database_engine import get_db_connection
+import database_engine
 
 import hashlib
 
@@ -27,6 +27,12 @@ class NomineeInfo(object):
 def hash_password(password):
 	# sha512 may be overkill
     return hashlib.sha512(password).hexdigest()
+
+def get_fullname(user):
+	name = None
+	if user is not None:
+		name = user.firstname + ' ' + user.lastname
+	return name
 		
 def get_user(user):
 	"""
@@ -36,7 +42,7 @@ def get_user(user):
 	if user is None:
 		return None
 		
-	connection = get_db_connection()
+	connection = database_engine.get_db_connection()
 	cursor = connection.cursor()
 	if type(user) == int:
 		cursor.execute("select userid, username, password, firstname, lastname "
@@ -84,7 +90,7 @@ def is_valid_login(username, password):
 	Checks if a username, password pair match.
 	Returns 0 if they do, 1 if pass doesn't match, 2 if username doesn't exist
 	"""
-	connection = get_db_connection()
+	connection = database_engine.get_db_connection()
 	cursor = connection.cursor()
 
 	username = username.lower() # Case insensitivity.

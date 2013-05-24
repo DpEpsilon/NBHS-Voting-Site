@@ -1,5 +1,5 @@
 import sqlite3
-from user import hash_password
+import hashlib #test purposes only
 _connection = None
 
 ### TABLES ###
@@ -32,9 +32,9 @@ def init_db():
 	if 'nominators' not in table_names:
 		create_nominators_table(cursor)
 
-	test_pass = hash_password('pass')
+	test_pass = hashlib.sha512('pass').hexdigest()
 	cursor.execute("""INSERT INTO users (username, password, firstname, lastname)
-			VALUES ('supbro',""" + test_pass + """, 'abyss', 'maul');""")
+			VALUES ('supbro', ?, 'abyss', 'maul');""", (test_pass,))
 	
 		
 	#connection.close()

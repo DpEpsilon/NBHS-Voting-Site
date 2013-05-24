@@ -7,6 +7,16 @@
             <li{% if p == page %} class="active"{% end if %}><a href="{% safe p.url %}">{! p.title !}</a></li>
             {% end for %}
           </ul>
+          <ul class="nav pull-right">
+            {% if name is not None %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{! name !}<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/logout" method="post">Sign out</a></li>
+              </ul>
+            </li>
+            {% end if %}
+          </ul>
         </div>
       </div>
     </div>
