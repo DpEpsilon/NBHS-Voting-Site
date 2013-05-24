@@ -88,7 +88,7 @@ def login_post():
 												'valid': validity,
 												'name': name})
 
-@post('/logout')
+@route('/logout')
 def logout_post():
 	cookie = request.get_cookie("login")
 	if cookie is not None:
