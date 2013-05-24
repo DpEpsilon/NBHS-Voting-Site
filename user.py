@@ -91,7 +91,7 @@ def is_valid_login(username, password):
 
     if not query:
     	return 2
-    if query[0] == password:
+    if query[0] == hash_password(password):
     	return 0
     else:
     	return 1
