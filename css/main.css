@@ -1,0 +1,32 @@
+.roundlet {
+    margin: 0;
+    padding: 14px;
+    background-color: #eee;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: #ddd;
+}
+
+.roundlet.first {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.roundlet.last {
+    border-width: 0px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.roundlet.atomic {
+    margin: 0;
+    padding: 14px;
+    background-color: #eee;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: #ddd;
+	border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}

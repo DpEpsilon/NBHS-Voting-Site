@@ -5,16 +5,18 @@
     
     {% include navbar.html %}
 
-    <div class="span6" style="color:red; font-size:16pt">
-      <p>
-        {% if valid == 1 %}
-        Password does not match
-        {% else %} {% if valid == 2 %}
-        Username does not exist
-        {% end if %}{% end if %}
-      </p>
-    </div>
-    <br>
+	{% if valid != 0 %}
+	<div class="span6" style="color:red; font-size:16pt">
+	  <div class="roundlet atomic span6">
+		{% if valid == 1 %}
+		Password does not match
+		{% else %} {% if valid == 2 %}
+		Username does not exist
+		{% end if %}{% end if %}
+	  </div>
+	</div>
+	<br><br><br>
+	{% end if %}
 
     <div class="container">
       
