@@ -80,9 +80,8 @@ def login_post():
 		cookie = cookies.give_cookie(request.forms.get('username'))
 		print cookie
 		response.set_cookie("login", cookie, max_age=cookies.expire_time)
-		return template.render("login.html", {'pages': pages, 'page': pages[2],
-												'valid': 0,
-												'name': name})
+		return template.render("home_redirect.html",
+							   {'message': "<h1>Login Successful</h1>"})
 	else:
 		return template.render("login.html", {'pages': pages, 'page': pages[2],
 												'valid': validity,
