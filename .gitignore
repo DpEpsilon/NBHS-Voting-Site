@@ -3,5 +3,6 @@
 # emacs and vim backups
 *~
 
-# configuration file
+# varying files
 config.json
+sitedatabase.db
