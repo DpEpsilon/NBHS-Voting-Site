@@ -21,7 +21,7 @@ pages = [
 	]
 
 config = {}
-config_vars = ["name"]
+config_vars = ["name", "status"]
 
 
 def process_cookie(cookie):

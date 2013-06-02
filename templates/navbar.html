@@ -1,7 +1,8 @@
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">{! config['name'] !}</a>
+          <a class="brand" href="#">{! config['name'] !}
+			{% if config['status'] == 'nominations' %}Nominations{% else %}Voting{% end if %}</a>
           <ul class="nav">
 			{% for p in pages %}
             <li{% if p == page %} class="active"{% end if %}><a href="{% safe p.url %}">{! p.title !}</a></li>
