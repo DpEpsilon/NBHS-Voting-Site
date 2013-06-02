@@ -2,3 +2,6 @@
 
 # emacs and vim backups
 *~
+
+# configuration file
+config.json

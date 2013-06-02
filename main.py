@@ -3,6 +3,7 @@ import database_engine
 import cookies
 import user
 
+import json
 import argparse
 from bottle import route, run, static_file, error,\
 	abort, redirect, get, post, request, response
@@ -18,6 +19,10 @@ pages = [
 	Page('/nominate', 'Nominate'),
 	Page('/login', 'Login')
 	]
+
+config = {}
+config_vars = ["name"]
+
 
 def process_cookie(cookie):
 	# See if they are logged in. If so display their name
@@ -47,7 +52,8 @@ def favicon():
 @route('/')
 def index():
 	name = user.get_fullname(process_cookie(request.get_cookie("login")))
-	return template.render("index.html", {'pages': pages, 'page': pages[0],
+	return template.render("index.html", {'config': config,
+										  'pages': pages, 'page': pages[0],
 										  'status': 'nominations',
 										  'has_voted': True,
 										  'name': name})
@@ -55,23 +61,26 @@ def index():
 @get('/nominate')
 def nominate_get():
 	name = user.get_fullname(process_cookie(request.get_cookie("login")))
-	return template.render("nominate.html", {'pages': pages, 'page': pages[1],
-											'name': name})
+	return template.render("nominate.html", {'config': config,
+											 'pages': pages, 'page': pages[1],
+											 'name': name})
 
 @post('/nominate')
 def nominate_post():
 	#print request.forms.get('leadership_experience')
 	#print request.forms.get('why')
 	name = user.get_fullname(process_cookie(request.get_cookie("login")))
-	return template.render("nominate.html", {'pages': pages, 'page': pages[1],
-											'name': name})
+	return template.render("nominate.html", {'config': config,
+											 'pages': pages, 'page': pages[1],
+											 'name': name})
 
 @get('/login')
 def login_get():
 	name = user.get_fullname(process_cookie(request.get_cookie("login")))
-	return template.render("login.html", {'pages': pages, 'page': pages[2],
-											'valid': 0,
-											'name': name})
+	return template.render("login.html", {'config': config,
+										  'pages': pages, 'page': pages[2],
+										  'valid': 0,
+										  'name': name})
 @post('/login')
 def login_post():
 	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
@@ -83,9 +92,10 @@ def login_post():
 		return template.render("home_redirect.html",
 							   {'message': "<h1>Login Successful</h1>"})
 	else:
-		return template.render("login.html", {'pages': pages, 'page': pages[2],
-												'valid': validity,
-												'name': name})
+		return template.render("login.html", {'config': config,
+											  'pages': pages, 'page': pages[2],
+											  'valid': validity,
+											  'name': name})
 
 @route('/logout')
 def logout_post():
@@ -102,6 +112,8 @@ def slash_redir_get(something):
 def slash_redir_post(something):
 	redirect("/" + something)
 
+def get_missing_config_variables():
+	return list(set(config_vars).difference(set(config)))
 
 if __name__ == '__main__':
 	arg_parser = argparse.ArgumentParser(
@@ -116,6 +128,20 @@ if __name__ == '__main__':
 	args = arg_parser.parse_args().__dict__
 
 	database_engine.init_db()
+
+	try:
+		config = json.load(open("config.json"))
+	except IOError:
+		print "WARNING: No configuration file found."
+	missing_variables = get_missing_config_variables()
+	
+	if len(missing_variables) > 0:
+		print "WARNING: The following variables are missing "\
+			"from the configuration and will default to None: " +\
+			', '.join(missing_variables)
+		print "There may be unexpected consequences as a result."
+		for var in missing_variables:
+			config[var] = None
 	
 	if not args['port'].isdigit():
 		arg_parser.print_usage()
