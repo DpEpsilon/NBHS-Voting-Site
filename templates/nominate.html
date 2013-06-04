@@ -7,14 +7,12 @@
     <div class="container">
 	  
 	  <form method="post" action="/nominate">
-		<h3>What leadership experience have you had?</h3>
-		<textarea name='leadership_experience' style='width: 600px; height: 200px'>
-Write your leadership experience here.</textarea>
+		{% for field in config['nominee_fields'] %}
+		<h3>{! field['question'] !}</h3>
+		<textarea name='{! field['name'] !}' style='width: 600px; height: 200px'>
+{! field['text_area'] !}</textarea>
 		<br>
-		<h3>Why do you want to be a member of the Student Representative Council?</h3>
-		<textarea name='why' style='width: 600px; height: 200px'>
-Write about why you want to be an SRC member here.</textarea>
-		<br>
+		{% end for %}
 		<input type='submit' value="Submit Nomination Form">
 	  </form>
 	  

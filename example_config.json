@@ -1,4 +1,16 @@
 {
 	"name": "NBHS SRC",
-	"status": "nominations"
+	"status": "nominations",
+	"nominee_fields": [
+		{
+			"name": "leadership_experience",
+			"question": "What leadership experience have you had?",
+			"text_area": "Write your leadership experience here."
+		},
+		{
+			"name": "why",
+			"question": "Why do you want to be a member of the Student Representative Council?",
+			"text_area": "Write about why you want to be an SRC member here."
+		}
+	]
 }
