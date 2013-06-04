@@ -29,13 +29,14 @@ def init_db():
 		create_students_table(cursor)
 	if 'nominees' not in table_names:
 		create_nominees_table(cursor)
+	if 'nominee_fields' not in table_names:
+		create_nominee_fields_table(cursor)
 	if 'nominators' not in table_names:
 		create_nominators_table(cursor)
 
 	test_pass = hashlib.sha512('pass').hexdigest()
 	cursor.execute("""INSERT INTO users (username, password, firstname, lastname)
 			VALUES ('supbro', ?, 'abyss', 'maul');""", (test_pass,))
-	
 		
 	#connection.close()
 	
@@ -65,14 +66,24 @@ foreign key (userid) references users (userid)
 """)
 
 def create_nominees_table(cursor):
-	print "INFO: Creating nominees_table"
+	print "INFO: Creating nominees table"
 	cursor.execute("""
 create table nominees
 (
-userid integer primary key,
-experience text,
-why text,
-foreign key (userid) references students (userid)
+userid integer primary key
+);
+""")
+
+def create_nominee_fields_table(cursor):
+	print "INFO: Creating nominee_fields table"
+	cursor.execute("""
+create table nominee_fields
+(
+field text,
+userid integer,
+submission text,
+primary key (field, userid)
+foreign key (userid) references nominees (userid)
 );
 """)
 

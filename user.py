@@ -12,17 +12,14 @@ class User(object):
 		self.firstname = firstname
 		self.lastname = lastname
 		self.student_info = student_info
-		self.nominee_info = nominee_info
 
 class StudentInfo(object):
-	def __init__(self, year, house):
+	def __init__(self, year, house, is_nominee, nominee_fields, nominators):
 		self.year = year
 		self.house = house
-
-class NomineeInfo(object):
-	def __init__(self, experience, why):
-		self.experience = experience
-		self.why = why
+		self.is_nominee = is_nominee
+		self.nominee_fields = nominee_fields
+		self.nominators = nominators
 
 def hash_password(password):
 	# sha512 may be overkill
@@ -59,31 +56,63 @@ def get_user(user):
 		return None
 	print user_table_row
 	userid = user_table_row[0]
+
+	student_info = get_student_info(userid)
 	
-	cursor.execute("select year, house from students "
-				   "where userid = ?", (userid,))
-	student_table_row = cursor.fetchone()
-	cursor.execute("select experience, why from nominees "
-				   "where userid = ?", (userid,))
-	nominees_table_row = cursor.fetchone()
-
-	student_info = None
-	if student_table_row is not None:
-		student_info = StudentInfo(student_table_row[0],
-							student_table_row[1])
-	nominee_info = None
-	if nominees_table_row is not None:
-		nominee_info = NomineeInfo(nominees_table_row[0],
-							nominees_table_row[1])
-
 	return User(user_table_row[0],
 				user_table_row[1],
 				user_table_row[2],
 				user_table_row[3],
 				user_table_row[4],
-				student_info,
-				nominee_info
-	)
+				student_info)
+
+def get_student_info(userid):
+	connection = database_engine.get_db_connection()
+	cursor = connection.cursor()
+
+	cursor.execute("select year, house from students "
+				   "where userid = ?", (userid,))
+	student_table_row = cursor.fetchone()
+
+	is_nominee = get_is_nominee(userid)
+	nominee_fields = get_nominee_fields(userid)
+	nominators = get_nominators(userid)
+	
+	student_info = None
+	if student_table_row is not None:
+		student_info = StudentInfo(student_table_row[0],
+								   student_table_row[1],
+								   is_nominee,
+								   nominee_fields,
+								   nominators)
+	return student_info
+
+
+def get_is_nominee(userid):
+	connection = database_engine.get_db_connection()
+	cursor = connection.cursor()
+
+	cursor.execute("select userid from nominees "
+				   "where userid = ?", (userid,))
+	nominees_table_row = cursor.fetchone()
+
+	return nominees_table_row is not None
+
+def get_nominee_fields(userid):
+	connection = database_engine.get_db_connection()
+	cursor = connection.cursor()
+	cursor.execute("select field, submission from nominee_fields "
+				   "where userid = ?", (userid,))
+
+	return dict(cursor.fetchmany())
+
+def get_nominators(userid):
+	connection = database_engine.get_db_connection()
+	cursor = connection.cursor()
+	cursor.execute("select userid, why from nominators "
+				   "where nominee = ?", (userid,))
+
+	return dict(cursor.fetchmany())
 
 def is_valid_login(username, password):
 	"""
@@ -95,7 +124,8 @@ def is_valid_login(username, password):
 
 	username = username.lower() # Case insensitivity.
 	
-	query = cursor.execute("""SELECT password FROM users WHERE username = ?""", (username,)).fetchone()
+	query = cursor.execute("""SELECT password FROM users WHERE username = ?""",
+						   (username,)).fetchone()
 
 	if not query:
 		return 2
