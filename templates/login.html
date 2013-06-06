@@ -12,7 +12,9 @@
 		Password does not match
 		{% else %} {% if valid == 2 %}
 		Username does not exist
-		{% end if %}{% end if %}
+		{% else %} {% if valid == 3 %}
+		You must be logged in to do that.
+		{% end if %}{% end if %}{% end if %}
 	  </div>
 	</div>
 	<br><br><br>

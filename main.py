@@ -51,40 +51,47 @@ def favicon():
 
 @route('/')
 def index():
-	name = user.get_fullname(process_cookie(request.get_cookie("login")))
+	current_user = process_cookie(request.get_cookie("login"))
 	return template.render("index.html", {'config': config,
 										  'pages': pages, 'page': pages[0],
 										  'status': 'nominations',
 										  'has_voted': True,
-										  'name': name})
+										  'user': current_user})
 
 @get('/nominate')
 def nominate_get():
-	name = user.get_fullname(process_cookie(request.get_cookie("login")))
+	current_user = process_cookie(request.get_cookie("login"))
+	if current_user is None:
+		redirect('/login?message=3')
 	return template.render("nominate.html", {'config': config,
 											 'pages': pages, 'page': pages[1],
-											 'name': name})
+											 'user': current_user})
 
 @post('/nominate')
 def nominate_post():
 	#print request.forms.get('leadership_experience')
 	#print request.forms.get('why')
-	name = user.get_fullname(process_cookie(request.get_cookie("login")))
+	current_user = process_cookie(request.get_cookie("login"))
 	return template.render("nominate.html", {'config': config,
 											 'pages': pages, 'page': pages[1],
-											 'name': name})
+											 'user': current_user})
 
 @get('/login')
 def login_get():
-	name = user.get_fullname(process_cookie(request.get_cookie("login")))
+	message = request.query.get('message')
+	try:
+		message = int(message)
+	except:
+		message = 0
+	current_user = process_cookie(request.get_cookie("login"))
 	return template.render("login.html", {'config': config,
 										  'pages': pages, 'page': pages[2],
-										  'valid': 0,
-										  'name': name})
+										  'valid': message,
+										  'user': current_user})
 @post('/login')
 def login_post():
 	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
-	name = user.get_fullname(process_cookie(request.get_cookie("login")))
+	current_user = process_cookie(request.get_cookie("login"))
 	if validity == 0: # Success		
 		cookie = cookies.give_cookie(request.forms.get('username'))
 		print cookie
@@ -95,7 +102,7 @@ def login_post():
 		return template.render("login.html", {'config': config,
 											  'pages': pages, 'page': pages[2],
 											  'valid': validity,
-											  'name': name})
+											  'user': current_user})
 
 @route('/logout')
 def logout_post():
