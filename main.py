@@ -61,9 +61,21 @@ def index():
 @get('/nominate')
 def nominate_get():
 	current_user = process_cookie(request.get_cookie("login"))
+	nominee_fields = config['nominee_fields']
 	if current_user is None:
 		redirect('/login?message=3')
+	if current_user.student_info is None:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>Staff cannot nominate</h1>"})
+
+	nominee_fields = filter(
+		lambda x: x['name'] not in current_user.student_info.nominee_fields,
+		nominee_fields)
+	
+	print "nominee_fields", nominee_fields	
+	
 	return template.render("nominate.html", {'config': config,
+											 'nominee_fields': nominee_fields,
 											 'pages': pages, 'page': pages[1],
 											 'user': current_user})
 
@@ -71,9 +83,11 @@ def nominate_get():
 def nominate_post():
 	#print request.forms.get('leadership_experience')
 	#print request.forms.get('why')
-	nominee_fields = config['nominee_fields']
 	current_user = process_cookie(request.get_cookie("login"))
+	nominee_fields = config['nominee_fields']
+	
 	return template.render("nominate.html", {'config': config,
+											 'nominee_fields': [],
 											 'pages': pages, 'page': pages[1],
 											 'user': current_user})
 
