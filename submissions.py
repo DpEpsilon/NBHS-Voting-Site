@@ -7,3 +7,4 @@ def add_nominee_field(userid, field, submission):
 
 	cursor.execute("""insert into nominee_fields (userid, field, submission)
 values (?, ?, ?);""", (userid, field, submission))
+	connection.commit()
