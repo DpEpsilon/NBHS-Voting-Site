@@ -7,7 +7,7 @@
     <div class="container">
 	  
 	  <form method="post" action="/nominate">
-		{% for field in config['nominee_fields'] %}
+		{% for field in nominee_fields %}
 		<h3>{! field['question'] !}</h3>
 		<textarea name='{! field['name'] !}' style='width: 600px; height: 200px'>
 {! field['text_area'] !}</textarea>

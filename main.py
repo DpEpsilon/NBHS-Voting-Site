@@ -71,6 +71,7 @@ def nominate_get():
 def nominate_post():
 	#print request.forms.get('leadership_experience')
 	#print request.forms.get('why')
+	nominee_fields = config['nominee_fields']
 	current_user = process_cookie(request.get_cookie("login"))
 	return template.render("nominate.html", {'config': config,
 											 'pages': pages, 'page': pages[1],
