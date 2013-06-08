@@ -104,7 +104,7 @@ def get_nominee_fields(userid):
 	cursor.execute("select field, submission from nominee_fields "
 				   "where userid = ?", (userid,))
 
-	return dict(cursor.fetchmany())
+	return dict(cursor.fetchall())
 
 def get_nominators(userid):
 	connection = database_engine.get_db_connection()
@@ -112,7 +112,7 @@ def get_nominators(userid):
 	cursor.execute("select userid, why from nominators "
 				   "where nominee = ?", (userid,))
 
-	return dict(cursor.fetchmany())
+	return dict(cursor.fetchall())
 
 def is_valid_login(username, password):
 	"""
