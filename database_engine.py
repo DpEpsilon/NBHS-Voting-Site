@@ -30,6 +30,8 @@ def init_db():
 			VALUES ('supbro', ?, 'abyss', 'maul');""", (test_pass,))
 	if 'students' not in table_names:
 		create_students_table(cursor)
+		cursor.execute("""INSERT INTO students (userid, year, house)
+			VALUES (1, 11, "UBER_HOUSE");""")
 	if 'nominees' not in table_names:
 		create_nominees_table(cursor)
 	if 'nominee_fields' not in table_names:
@@ -37,7 +39,7 @@ def init_db():
 	if 'nominators' not in table_names:
 		create_nominators_table(cursor)
 
-	#connection.close()
+	connection.commit()
 	
 def create_users_table(cursor):
 	print "INFO: Creating users table"
