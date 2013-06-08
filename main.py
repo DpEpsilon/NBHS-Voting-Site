@@ -2,6 +2,7 @@ import template
 import database_engine
 import cookies
 import user
+import submissions
 
 import json
 import argparse
@@ -71,6 +72,11 @@ def nominate_get():
 	nominee_fields = filter(
 		lambda x: x['name'] not in current_user.student_info.nominee_fields,
 		nominee_fields)
+
+	if len(nominee_fields) == 0:
+		return template.render("home_redirect.html",
+							   {'message': """<h1>You have already
+ submitted your nomination</h1>"""})
 	
 	print "nominee_fields", nominee_fields	
 	
@@ -85,11 +91,18 @@ def nominate_post():
 	#print request.forms.get('why')
 	current_user = process_cookie(request.get_cookie("login"))
 	nominee_fields = config['nominee_fields']
+
+	nominee_fields = filter(
+		lambda x: x['name'] not in current_user.student_info.nominee_fields,
+		nominee_fields)
+
+	for field in nominee_fields:
+		submission = request.forms.get(field['name'])
+		submissions.add_nominee_field(current_user.userid,
+									  field['name'], submission)
 	
-	return template.render("nominate.html", {'config': config,
-											 'nominee_fields': [],
-											 'pages': pages, 'page': pages[1],
-											 'user': current_user})
+	return template.render("home_redirect.html",
+						   {'message': "<h1>Submitted</h1>"})
 
 @get('/login')
 def login_get():
