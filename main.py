@@ -15,11 +15,20 @@ class Page(object):
 	def __init__(self, url, title):
 		self.url = url
 		self.title = title
-pages = [
+
+nomination_pages = [
 	Page('/', 'Home'),
 	Page('/nominate', 'Nominate'),
 	Page('/login', 'Login')
 	]
+
+voting_pages = [
+	Page('/', 'Home'),
+	Page('/vote', 'Vote'),
+	Page('/login', 'Login')
+	]
+
+pages = []
 
 config = {}
 config_vars = ["name", "status"]
@@ -59,6 +68,13 @@ def index():
 										  'has_voted': True,
 										  'user': current_user})
 
+@get('/vote')
+def vote_get():
+	current_user = process_cookie(request.get_cookie("login"))
+	#return template.render("voting.html", {'config': config,
+	#									   'pages': pages, 'page': None,
+	#									   'user': current_user})
+	return "<h1>No.</h1>"
 @get('/nominate')
 def nominate_get():
 	current_user = process_cookie(request.get_cookie("login"))
@@ -77,8 +93,6 @@ def nominate_get():
 		return template.render("home_redirect.html",
 							   {'message': """<h1>You have already
  submitted your nomination</h1>"""})
-	
-	print "nominee_fields", nominee_fields	
 	
 	return template.render("nominate.html", {'config': config,
 											 'nominee_fields': nominee_fields,
@@ -177,7 +191,12 @@ if __name__ == '__main__':
 		print "There may be unexpected consequences as a result."
 		for var in missing_variables:
 			config[var] = None
-	
+
+	if config['status'] == "nominations":
+		pages = nomination_pages
+	elif config['status'] == "voting":
+		pages = voting_pages
+			
 	if not args['port'].isdigit():
 		arg_parser.print_usage()
 		print "error: port must be a decimal integer"
