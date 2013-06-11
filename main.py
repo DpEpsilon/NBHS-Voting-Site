@@ -16,6 +16,10 @@ class Page(object):
 		self.url = url
 		self.title = title
 
+	def __eq__(self, other):
+		return self.url == other.url and self.title == other.title
+
+
 nomination_pages = [
 	Page('/', 'Home'),
 	Page('/nominate', 'Nominate'),
@@ -61,22 +65,29 @@ def favicon():
 
 @route('/')
 def index():
+	page = Page('/', 'Home')
 	current_user = process_cookie(request.get_cookie("login"))
 	return template.render("index.html", {'config': config,
-										  'pages': pages, 'page': pages[0],
+										  'pages': pages, 'page': page,
 										  'status': 'nominations',
 										  'has_voted': True,
 										  'user': current_user})
 
 @get('/vote')
 def vote_get():
+	page = Page('/vote', 'Vote')
+	if page not in pages:
+		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
 	#return template.render("voting.html", {'config': config,
-	#									   'pages': pages, 'page': None,
+	#									   'pages': pages, 'page': page,
 	#									   'user': current_user})
 	return "<h1>No.</h1>"
 @get('/nominate')
 def nominate_get():
+	page = Page('/nominate', 'Nominate')
+	if page not in pages:
+		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
 	nominee_fields = config['nominee_fields']
 	if current_user is None:
@@ -96,7 +107,7 @@ def nominate_get():
 	
 	return template.render("nominate.html", {'config': config,
 											 'nominee_fields': nominee_fields,
-											 'pages': pages, 'page': pages[1],
+											 'pages': pages, 'page': page,
 											 'user': current_user})
 
 @post('/nominate')
@@ -120,6 +131,7 @@ def nominate_post():
 
 @get('/login')
 def login_get():
+	page = Page('/login', 'Login')
 	message = request.query.get('message')
 	try:
 		message = int(message)
@@ -127,11 +139,12 @@ def login_get():
 		message = 0
 	current_user = process_cookie(request.get_cookie("login"))
 	return template.render("login.html", {'config': config,
-										  'pages': pages, 'page': pages[2],
+										  'pages': pages, 'page': page,
 										  'valid': message,
 										  'user': current_user})
 @post('/login')
 def login_post():
+	page = Page('/login', 'Login')
 	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
 	current_user = process_cookie(request.get_cookie("login"))
 	if validity == 0: # Success		
@@ -142,7 +155,7 @@ def login_post():
 							   {'message': "<h1>Login Successful</h1>"})
 	else:
 		return template.render("login.html", {'config': config,
-											  'pages': pages, 'page': pages[2],
+											  'pages': pages, 'page': pages,
 											  'valid': validity,
 											  'user': current_user})
 
