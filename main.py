@@ -41,12 +41,12 @@ config_vars = ["name", "status"]
 
 def process_cookie(cookie):
 	# See if they are logged in. If so display their name
-	curr_user = None
+	current_user = None
 	if cookie is not None:
 		login_id = cookies.get_id(cookie)
 		if login_id is not None:
-			curr_user = user.get_user(login_id)
-	return curr_user
+			current_user = user.get_user(login_id)
+	return current_user
 
 @route('/static/<filename:path>')
 def serve_static(filename):
