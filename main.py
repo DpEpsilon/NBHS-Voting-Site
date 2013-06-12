@@ -165,12 +165,18 @@ def nominate_post():
 @get('/login')
 def login_get():
 	page = Page('/login', 'Login')
+	current_user = process_cookie(request.get_cookie("login"))
+	
+	if current_user is not None:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>You are already logged in</h1>"})
+
 	message = request.query.get('message')
 	try:
 		message = int(message)
 	except:
 		message = 0
-	current_user = process_cookie(request.get_cookie("login"))
+	
 	return template.render("login.html", {'config': config,
 										  'pages': pages, 'page': page,
 										  'valid': message,
@@ -178,8 +184,14 @@ def login_get():
 @post('/login')
 def login_post():
 	page = Page('/login', 'Login')
-	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
 	current_user = process_cookie(request.get_cookie("login"))
+	
+	if current_user is not None:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>You are already logged in</h1>"})
+	
+	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
+	
 	if validity == 0: # Success		
 		cookie = cookies.give_cookie(request.forms.get('username'))
 		print cookie
