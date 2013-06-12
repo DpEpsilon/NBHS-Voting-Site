@@ -173,9 +173,14 @@ def nominate_post():
 		return template.render("home_redirect.html",
 							   {'message': """<h1>You have already
  submitted your nomination</h1>"""})
+
+	truncated = False
 	
 	for field in nominee_fields:
 		submission = request.forms.get(field['name'])
+		if len(submission) > field['character_limit']:
+			truncated = True
+			submission = submission[:650] + "...[truncated]"
 		submissions.add_nominee_field(current_user.userid,
 									  field['name'], submission)
 
@@ -183,7 +188,9 @@ def nominate_post():
 		submissions.add_nominee(current_user.userid)
 	
 	return template.render("home_redirect.html",
-						   {'message': "<h1>Submitted</h1>"})
+						   {'message': "<h1>Submitted" +
+							" (truncated)" if truncated else "" +
+							"</h1>"})
 
 @get('/login')
 def login_get():
