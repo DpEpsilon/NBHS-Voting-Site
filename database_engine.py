@@ -26,6 +26,8 @@ def init_db():
 		create_users_table(cursor)
 	if 'students' not in table_names:
 		create_students_table(cursor)
+		cursor.execute("""INSERT INTO students (userid, year, house)
+			VALUES (1, 11, "UBER_HOUSE");""")
 	if 'nominees' not in table_names:
 		create_nominees_table(cursor)
 	if 'nominee_fields' not in table_names:
