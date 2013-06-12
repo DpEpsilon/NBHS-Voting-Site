@@ -90,12 +90,17 @@ def nominate_get():
 		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
 	nominee_fields = config['nominee_fields']
+	
 	if current_user is None:
 		redirect('/login?message=3')
+		
 	if current_user.student_info is None:
 		return template.render("home_redirect.html",
 							   {'message': "<h1>Staff cannot nominate</h1>"})
-
+	if not current_user.student_info.is_nominee and config['prenominate']:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>You are not a candidate.</h1>"})
+	
 	nominee_fields = filter(
 		lambda x: x['name'] not in current_user.student_info.nominee_fields,
 		nominee_fields)
@@ -112,19 +117,39 @@ def nominate_get():
 
 @post('/nominate')
 def nominate_post():
-	#print request.forms.get('leadership_experience')
-	#print request.forms.get('why')
+	page = Page('/nominate', 'Nominate')
+	if page not in pages:
+		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
 	nominee_fields = config['nominee_fields']
-
+	
+	if current_user is None:
+		redirect('/login?message=3')
+		
+	if current_user.student_info is None:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>Staff cannot nominate</h1>"})
+	
+	if not current_user.student_info.is_nominee and config['prenominate']:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>You are not a candidate.</h1>"})
+	
 	nominee_fields = filter(
 		lambda x: x['name'] not in current_user.student_info.nominee_fields,
 		nominee_fields)
 
+	if len(nominee_fields) == 0:
+		return template.render("home_redirect.html",
+							   {'message': """<h1>You have already
+ submitted your nomination</h1>"""})
+	
 	for field in nominee_fields:
 		submission = request.forms.get(field['name'])
 		submissions.add_nominee_field(current_user.userid,
 									  field['name'], submission)
+
+	if not config['prenominate']:
+		submissions.add_nominee(current_user.userid)
 	
 	return template.render("home_redirect.html",
 						   {'message': "<h1>Submitted</h1>"})
