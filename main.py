@@ -1,6 +1,7 @@
 import template
 import database_engine
 import cookies
+import csrf
 import user
 import submissions
 
@@ -110,10 +111,12 @@ def nominate_get():
 							   {'message': """<h1>You have already
  submitted your nomination</h1>"""})
 	
-	return template.render("nominate.html", {'config': config,
-											 'nominee_fields': nominee_fields,
-											 'pages': pages, 'page': page,
-											 'user': current_user})
+	return template.render("nominate.html",
+						   {'config': config,
+							'nominee_fields': nominee_fields,
+							'csrf': csrf.get_csrf_key(current_user.userid),
+							'pages': pages, 'page': page,
+							'user': current_user})
 
 @post('/nominate')
 def nominate_post():
@@ -122,10 +125,15 @@ def nominate_post():
 		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
 	nominee_fields = config['nominee_fields']
+	given_csrf_key = request.forms.get('csrf')
 	
 	if current_user is None:
 		redirect('/login?message=3')
-		
+
+	if not csrf.check_csrf_key(current_user.userid, given_csrf_key):
+		abort(403, "A potential CSRF attack was detected. "
+			  "Please try again later.")
+	
 	if current_user.student_info is None:
 		return template.render("home_redirect.html",
 							   {'message': "<h1>Staff cannot nominate</h1>"})
