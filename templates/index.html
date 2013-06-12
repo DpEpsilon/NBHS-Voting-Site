@@ -42,16 +42,28 @@
 		  <h2 class="page-header">You are a nominee.</h2>
 		  
 		  {% if len(user.student_info.nominee_fields) == 0 %}
-		  <h3>You have not submitted a statement</h3>
-		  {% end if %}
+		  <h3>You have not submitted a statement.</h3>
+		  <p>Click Nominate to do so now.</p>
+		  {% else %}
 		  {% for field in config['nominee_fields'] %}
-		  {% if field['name'] in user.student_info.nominee_fields %}
 		  <h3>{! field['question'] !}</h3>
+		  {% if field['name'] in user.student_info.nominee_fields %}
 		  <blockquote>
 			{! user.student_info.nominee_fields[field['name']] !}
 		  </blockquote>
+		  <form method="post" action="/">
+			<input type="hidden" name="csrf" value="{! csrf !}">
+			<input type="hidden" name="to_delete" value="{! field['name'] !}">
+			<input type="submit" value="Delete '{! field['name'].capitalize().replace('_', ' ') !}'">
+		  </form>
+		  {% else %}
+		  <p>
+			You have not submitted this part of the statement.
+			Please click Nominate to do so now.
+		  </p>
 		  {% end if %}
 		  {% end for %}
+		  {% end if %}
 		  {% else %}
 		  You are not a nomineed
 		  {% end if %}
