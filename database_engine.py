@@ -33,6 +33,8 @@ def init_db():
 	if 'nominators' not in table_names:
 		create_nominators_table(cursor)
 
+	connection.commit()
+	
 def create_users_table(cursor):
 	print "INFO: Creating users table"
 	cursor.execute("""
