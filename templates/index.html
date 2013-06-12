@@ -30,10 +30,31 @@
 		  {% end if %}
 		  *}
 
+		  {% if user is not None %}
 		  {% if config['status'] == 'nominations' %}
+		  {% if not config['prenominate'] %}
 		  <h2 class="page-header">Pending Requests for Nominations</h2>
 
 		  <!-- Pending requests will go here... -->
+		  {% end if %}
+
+		  {% if user.student_info.is_nominee %}
+		  <h2 class="page-header">You are a nominee.</h2>
+		  
+		  {% if len(user.student_info.nominee_fields) == 0 %}
+		  <h3>You have not submitted a statement</h3>
+		  {% end if %}
+		  {% for field in config['nominee_fields'] %}
+		  {% if field['name'] in user.student_info.nominee_fields %}
+		  <h3>{! field['question'] !}</h3>
+		  <blockquote>
+			{! user.student_info.nominee_fields[field['name']] !}
+		  </blockquote>
+		  {% end if %}
+		  {% end for %}
+		  {% else %}
+		  You are not a nomineed
+		  {% end if %}
 		  
 		  {% else %}
 		  <h2 class="page-header">
@@ -43,6 +64,7 @@
 			You have already cast your vote.
 			{% end if %}
 		  </h2>
+		  {% end if %}
 		  {% end if %}
 		</div>
 	  </div>
