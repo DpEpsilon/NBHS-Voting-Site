@@ -1,5 +1,4 @@
 import sqlite3
-import hashlib #test purposes only
 _connection = None
 
 ### TABLES ###
@@ -25,9 +24,6 @@ def init_db():
 	# This can probably be done a *lot* better
 	if 'users' not in table_names:
 		create_users_table(cursor)
-		test_pass = hashlib.sha512('pass').hexdigest()
-		cursor.execute("""INSERT INTO users (username, password, firstname, lastname)
-			VALUES ('supbro', ?, 'abyss', 'maul');""", (test_pass,))
 	if 'students' not in table_names:
 		create_students_table(cursor)
 	if 'nominees' not in table_names:
@@ -37,8 +33,6 @@ def init_db():
 	if 'nominators' not in table_names:
 		create_nominators_table(cursor)
 
-	#connection.close()
-	
 def create_users_table(cursor):
 	print "INFO: Creating users table"
 	cursor.execute("""
