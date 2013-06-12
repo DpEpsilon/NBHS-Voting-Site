@@ -155,7 +155,7 @@ def login_post():
 							   {'message': "<h1>Login Successful</h1>"})
 	else:
 		return template.render("login.html", {'config': config,
-											  'pages': pages, 'page': pages,
+											  'pages': pages, 'page': page,
 											  'valid': validity,
 											  'user': current_user})
 
