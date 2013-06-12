@@ -64,15 +64,38 @@ def serve_js(filename):
 def favicon():
 	return static_file('favicon.ico', root='./', mimetype='image/x-icon')
 
-@route('/')
-def index():
+@get('/')
+def index_get():
 	page = Page('/', 'Home')
 	current_user = process_cookie(request.get_cookie("login"))
+	csrf_key = None
+	if current_user is not None:
+		csrf_key = csrf.get_csrf_key(current_user.userid)
 	return template.render("index.html", {'config': config,
 										  'pages': pages, 'page': page,
-										  'status': 'nominations',
+										  'csrf': csrf_key,
 										  'has_voted': True,
 										  'user': current_user})
+
+@post('/')
+def index_post():
+	page = Page('/', 'Home')
+	current_user = process_cookie(request.get_cookie("login"))
+	if current_user is None:
+		redirect('/')
+		
+	given_csrf_key = request.forms.get('csrf')
+	
+	if not csrf.check_csrf_key(current_user.userid, given_csrf_key):
+		abort(403, "A potential CSRF attack was detected. "
+			  "Please try again later.")
+
+	field_to_delete = request.forms.get('to_delete')
+
+	if field_to_delete is not None:
+		submissions.delete_nominee_field(current_user.userid, field_to_delete)
+	
+	redirect('/')
 
 @get('/vote')
 def vote_get():
