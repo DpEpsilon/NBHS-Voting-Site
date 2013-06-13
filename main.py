@@ -177,10 +177,11 @@ def nominate_post():
 	truncated = False
 	
 	for field in nominee_fields:
-		submission = request.forms.get(field['name'])
+		submission = request.forms.getunicode(field['name'])
 		if len(submission) > field['character_limit']:
 			truncated = True
 			submission = submission[:650] + "...[truncated]"
+		print "sub:", repr(submission)
 		submissions.add_nominee_field(current_user.userid,
 									  field['name'], submission)
 

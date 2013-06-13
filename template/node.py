@@ -33,7 +33,7 @@ class EvalNode(Node):
 		self.expression = expression
 
 	def eval(self, context):
-		return cgi.escape(str(eval(self.expression, {}, context)))
+		return cgi.escape(unicode(eval(self.expression, {}, context)))
 
 class SafeEvalNode(Node):
 	'''Node for a python expression which outputs an html string'''
@@ -41,7 +41,7 @@ class SafeEvalNode(Node):
 		self.expression = expression
 
 	def eval(self, context):
-		return str(eval(self.expression, {}, context))
+		return unicode(eval(self.expression, {}, context))
 
 class IfNode(Node):
 	'''Node for conditionally evaluating nodes'''
