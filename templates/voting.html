@@ -7,17 +7,28 @@
 
     <div class="container">
 	  <div class="row">
-		<form method="post" action="/voting">
-		  {% for column in nominees %}
-		  <div class="span4">
-			{% for nominee in column %}
-			<label>
-			{! nominee.firstname !} {! nominee.lastname !}
-			<input type="checkbox" name="{! nominee.username !}">
-			</label>
+		<form method="post" action="/vote">
+		  <div>
+			{% for column in nominees %}
+			<div class="span4">
+			  {% for nominee in column %}
+			  <label>
+				<div class="nominee">
+				  <span style="font-size: 12pt">{! nominee.firstname !} {! nominee.lastname !}</span>
+				  <input style="float: right" type="checkbox" name="{! nominee.userid !}">
+				  <br>
+				  <img class="nominee_photo" src="/static/photos/{! nominee.lastname !}, {! nominee.firstname !}.jpg">
+				  {% for field in nominee.student_info.nominee_fields %}
+				  <span style="font-size: 10pt" title="{! field !}">
+				  {! nominee.student_info.nominee_fields[field] !}
+				  <span>
+				  {% end for %}
+				</div>
+			  </label>
+			  {% end for %}
+			</div>
 			{% end for %}
 		  </div>
-		  {% end for %}
 		  <input type="submit" value="Submit Vote">
 		</form>
 	  </div>

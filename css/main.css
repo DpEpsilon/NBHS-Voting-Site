@@ -30,3 +30,23 @@
 	border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
+.nominee {
+	margin: 6px;
+	padding: 14px;
+	display:block;
+	background-color: #dfd;
+	border:1px solid #aea;
+	border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+	height: 400px;
+}
+
+.nominee_photo {
+	height: 197px;
+	width: auto;
+	float: left; 
+	margin: 4px;
+}

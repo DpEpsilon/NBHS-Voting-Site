@@ -5,6 +5,7 @@ import csrf
 import user
 import submissions
 
+import random
 import json
 import argparse
 from bottle import route, run, static_file, error,\
@@ -103,10 +104,22 @@ def vote_get():
 	if page not in pages:
 		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
-	#return template.render("voting.html", {'config': config,
-	#									   'pages': pages, 'page': page,
-	#									   'user': current_user})
-	return "<h1>No.</h1>"
+
+	nominees = user.get_nominees()
+	random.shuffle(nominees)
+	col_size = len(nominees)/3
+	if len(nominees) % 3 > 0:
+		col_size += 1
+	
+	nominees = [nominees[:col_size],
+				nominees[col_size:2*col_size],
+				nominees[2*col_size:]]
+	
+	return template.render("voting.html", {'config': config,
+										   'pages': pages, 'page': page,
+										   'nominees': nominees,
+										   'user': current_user})
+	
 @get('/nominate')
 def nominate_get():
 	page = Page('/nominate', 'Nominate')

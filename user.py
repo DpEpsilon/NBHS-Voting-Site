@@ -5,7 +5,7 @@ import hashlib
 
 class User(object):
 	def __init__(self, userid, username, password, firstname, lastname,\
-					 student_info=None, nominee_info=None):
+					 student_info=None):
 		self.userid = userid
 		self.username = username
 		self.password = password
@@ -30,7 +30,37 @@ def get_fullname(user):
 	if user is not None:
 		name = user.firstname + ' ' + user.lastname
 	return name
+
+def get_nominees(year=None, house=None):
+	connection = database_engine.get_db_connection()
+	cursor = connection.cursor()
+
+	condition = ""
+	
+	arguments = []
+	if year is not None:
+		arguments.append(year)
+		condition += " and students.year = ?"
+	if house is not None:
+		arguments.append(house)
+		condition += " and students.house = ?"
 		
+	if year is None and house is None:
+		cursor.execute("select users.userid, firstname, lastname "
+					   "from users join nominees, students "
+					   "where nominees.userid = users.userid and "
+					   "students.userid = users.userid" +
+					   condition)
+	
+	tuples = cursor.fetchall()
+	nominees = []
+	for t in tuples:
+		current_nominee = User(t[0], None, None, t[1], t[2],
+							   get_student_info(t[0]))
+		nominees.append(current_nominee)
+	
+	return nominees
+	
 def get_user(user):
 	"""
 	Takes a userid or username.
