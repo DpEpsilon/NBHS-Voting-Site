@@ -105,6 +105,9 @@ def vote_get():
 		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
 
+	if current_user is None:
+		redirect('/login?message=3')
+	
 	nominees = user.get_nominees()
 	random.shuffle(nominees)
 	col_size = len(nominees)/3
@@ -130,7 +133,7 @@ def nominate_get():
 	
 	if current_user is None:
 		redirect('/login?message=3')
-		
+	
 	if current_user.student_info is None:
 		return template.render("home_redirect.html",
 							   {'message': "<h1>Staff cannot nominate</h1>"})
