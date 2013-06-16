@@ -50,3 +50,15 @@
 	float: left; 
 	margin: 4px;
 }
+
+.vote_counter {
+	position: fixed;
+	display:block;
+	background-color: #eee;
+	border:1px solid #ddd;
+	padding: 7px;
+	top: 50%;
+	left: 0;
+	border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}

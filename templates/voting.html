@@ -9,13 +9,17 @@
 	  <div class="row">
 		<form method="post" action="/vote">
 		  <div>
+			<div class="vote_counter">
+			  Votes:<br>
+			  <span id="num_votes">0</span> / {! config['num_votes'] !}
+			</div>
 			{% for column in nominees %}
 			<div class="span4">
 			  {% for nominee in column %}
 			  <label>
 				<div class="nominee">
 				  <span style="font-size: 12pt">{! nominee.firstname !} {! nominee.lastname !}</span>
-				  <input style="float: right" type="checkbox" name="{! nominee.userid !}">
+				  <input style="float: right" type="checkbox" name="{! nominee.userid !}" onchange="changed_vote(this);">
 				  <br>
 				  <img class="nominee_photo" src="/static/photos/{! nominee.lastname !}, {! nominee.firstname !}.jpg">
 				  {% for field in nominee.student_info.nominee_fields %}
@@ -41,6 +45,7 @@
     </div> <!-- /container -->
 
 	{% include scripts.html %}
+	<script src="/js/voting.js"></script>
 
   </body>
 </html>
