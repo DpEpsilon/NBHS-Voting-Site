@@ -6,6 +6,9 @@ _connection = None
 # students
 # nominees
 # nominators
+# nominee_fields
+# voters
+# votes
 
 def get_db_connection():
 	global _connection
@@ -32,6 +35,10 @@ def init_db():
 		create_nominee_fields_table(cursor)
 	if 'nominators' not in table_names:
 		create_nominators_table(cursor)
+	if 'voters' not in table_names:
+		create_voters_table(cursor)
+	if 'votes' not in table_names:
+		create_votes_table(cursor)
 
 	connection.commit()
 	
@@ -93,5 +100,29 @@ why text,
 primary key (userid, nominee),
 foreign key (userid) references students (userid),
 foreign key (nominee) references nominees (userid)
+);
+""")
+
+def create_voters_table(cursor):
+	print "INFO: Creating has_voted table"
+	cursor.execute("""
+create table voters
+(
+userid integer,
+primary key (userid),
+foreign key (userid) references users (userid)
+);
+""")
+
+def create_votes_table(cursor):
+	print "INFO: Creating voted table"
+	cursor.execute("""
+create table votes
+(
+userid integer,
+voted integer,
+primary key (userid, voted),
+foreign key (userid) references voters (userid),
+foreign key (voted) references nominees (userid)
 );
 """)
