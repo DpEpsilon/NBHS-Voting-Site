@@ -122,7 +122,29 @@ def vote_get():
 										   'pages': pages, 'page': page,
 										   'nominees': nominees,
 										   'user': current_user})
+
+@post('/vote')
+def vote_post():
+	page = Page('/vote', 'Vote')
+	if page not in pages:
+		abort(404)
+	current_user = process_cookie(request.get_cookie("login"))
 	
+	if current_user is None:
+		redirect('/login?message=3')
+	
+	nominees = user.get_nominees()
+	votes = []
+	for n in nominees:
+		if request.forms.get(str(n.userid)):
+			votes.append(n.userid)
+	
+	if len(votes) != config['num_votes']:
+		redirect('/vote')
+	
+	return template.render("home_redirect.html",
+						   {'message': "<h1>Vote successful.</h1>"})
+
 @get('/nominate')
 def nominate_get():
 	page = Page('/nominate', 'Nominate')
