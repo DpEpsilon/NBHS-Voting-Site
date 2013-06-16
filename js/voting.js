@@ -13,4 +13,20 @@ function changed_vote(cb) {
 		count -= 1;
 	}
 	$('#num_votes').html(String(count));
+	if (count === $('#variables').data('num-votes')) {
+		boxes = $('.vote_box');
+
+		for (var i = 0; i < boxes.length; i++) {
+			
+			if (boxes[i].checked === false) {
+				boxes[i].disabled = true;
+			}
+		}
+	} else {
+		boxes = $('.vote_box');
+
+		for (var i = 0; i < boxes.length; i++) {
+			boxes[i].disabled = false;
+		}
+	}
 }
