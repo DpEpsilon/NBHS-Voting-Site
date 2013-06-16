@@ -1,6 +1,6 @@
 var count = 0;
-boxes = $('.vote_box');
 
+boxes = $('.vote_box');
 for (var i = 0; i < boxes.length; i++) {
 	// Just to make sure
 	boxes[i].checked = false;
@@ -22,11 +22,13 @@ function changed_vote(cb) {
 				boxes[i].disabled = true;
 			}
 		}
+		$('#submit_votes')[0].disabled = false;
 	} else {
 		boxes = $('.vote_box');
 
 		for (var i = 0; i < boxes.length; i++) {
 			boxes[i].disabled = false;
 		}
+		$('#submit_votes')[0].disabled = true;
 	}
 }
