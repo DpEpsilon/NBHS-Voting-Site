@@ -48,7 +48,9 @@ def process_cookie(cookie):
 	current_user = None
 	if cookie is not None:
 		login_id = cookies.get_id(cookie)
-		if login_id is not None:
+		if login_id == "admin":
+			current_user = special_admin
+		elif login_id is not None:
 			current_user = user.get_user(login_id)
 	return current_user
 
@@ -283,7 +285,8 @@ def login_post():
 							cookies.give_cookie("admin"),
 							max_age=cookies.expire_time)
 		
-		redirect("/vote_count")
+		return template.render("vote_count_redirect.html",
+							   {'message': "<h1>Admin Login Successful</h1>"})
 	
 	validity = user.is_valid_login(request.forms.get('username'),
 								   request.forms.get('password'))
