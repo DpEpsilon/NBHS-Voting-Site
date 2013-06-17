@@ -277,11 +277,16 @@ def login_post():
 		return template.render("home_redirect.html",
 							   {'message': "<h1>You are already logged in</h1>"})
 
-	if request.forms.get('username') == 'admin' and user.hash_password(request.forms.get('password')) == config["admin_hash"]:
-		response.set_cookie("login", cookies.give_cookie("admin"), max_age=cookies.expire_time)
+	if request.forms.get('username') == 'admin' and\
+			user.hash_password(request.forms.get('password')) == config["admin_hash"]:
+		response.set_cookie("login",
+							cookies.give_cookie("admin"),
+							max_age=cookies.expire_time)
+		
 		redirect("/vote_count")
 	
-	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
+	validity = user.is_valid_login(request.forms.get('username'),
+								   request.forms.get('password'))
 	
 	if validity == 0: # Success		
 		cookie = cookies.give_cookie(request.forms.get('username'))
