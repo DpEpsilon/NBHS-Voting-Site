@@ -5,13 +5,14 @@ import hashlib
 
 class User(object):
 	def __init__(self, userid, username, password, firstname, lastname,\
-					 student_info=None):
+					 has_voted, student_info=None):
 		self.userid = userid
 		self.username = username
 		self.password = password
 		self.firstname = firstname
 		self.lastname = lastname
 		self.student_info = student_info
+		self.has_voted = has_voted
 
 class StudentInfo(object):
 	def __init__(self, year, house, is_nominee, nominee_fields, nominators):
@@ -56,7 +57,7 @@ def get_nominees(year=None, house=None):
 	nominees = []
 	for t in tuples:
 		current_nominee = User(t[0], None, None, t[1], t[2],
-							   get_student_info(t[0]))
+							   None, get_student_info(t[0]))
 		nominees.append(current_nominee)
 	
 	return nominees
@@ -88,12 +89,14 @@ def get_user(user):
 	userid = user_table_row[0]
 
 	student_info = get_student_info(userid)
+	has_voted = get_has_voted(userid)
 	
 	return User(user_table_row[0],
 				user_table_row[1],
 				user_table_row[2],
 				user_table_row[3],
 				user_table_row[4],
+				has_voted,
 				student_info)
 
 def get_student_info(userid):
@@ -143,6 +146,14 @@ def get_nominators(userid):
 				   "where nominee = ?", (userid,))
 
 	return dict(cursor.fetchall())
+
+def get_has_voted(userid):
+	connection = database_engine.get_db_connection()
+	cursor = connection.cursor()
+	cursor.execute("select userid from voters "
+				   "where userid = ?", (userid,))
+	
+	return cursor.fetchone() is not None
 
 def is_valid_login(username, password):
 	"""

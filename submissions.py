@@ -33,3 +33,13 @@ def delete_nominee_field(userid, field):
  where userid = ? and field = ?""", (userid, field))
 	connection.commit()
 	
+def submit_votes(userid, votes):
+	connection = database_engine.get_db_connection()
+	cursor = connection.cursor()
+	cursor.execute("""insert into voters (userid) values (?)""", (userid,))
+
+	for vote in votes:
+		cursor.execute("""insert into votes (userid, voted)
+values (?, ?)""", (userid, vote));
+		
+	connection.commit()

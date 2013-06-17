@@ -107,6 +107,9 @@ def vote_get():
 
 	if current_user is None:
 		redirect('/login?message=3')
+	if current_user.has_voted:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>You have already voted.</h1>"})
 	
 	nominees = user.get_nominees()
 	random.shuffle(nominees)
@@ -132,6 +135,9 @@ def vote_post():
 	
 	if current_user is None:
 		redirect('/login?message=3')
+	if current_user.has_voted:
+		return template.render("home_redirect.html",
+							   {'message': "<h1>You have already voted.</h1>"})
 	
 	nominees = user.get_nominees()
 	votes = []
@@ -141,7 +147,9 @@ def vote_post():
 	
 	if len(votes) != config['num_votes']:
 		redirect('/vote')
-	
+
+	submissions.submit_votes(current_user.userid, votes)
+		
 	return template.render("home_redirect.html",
 						   {'message': "<h1>Vote successful.</h1>"})
 
