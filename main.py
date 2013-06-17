@@ -4,6 +4,7 @@ import cookies
 import csrf
 import user
 import submissions
+import vote
 
 import random
 import json
@@ -12,6 +13,8 @@ from bottle import route, run, static_file, error,\
 	abort, redirect, get, post, request, response
 
 import os
+
+special_admin = user.User(0, "admin", None, None, None, None)
 
 class Page(object):
 	def __init__(self, url, title):
@@ -273,6 +276,10 @@ def login_post():
 	if current_user is not None:
 		return template.render("home_redirect.html",
 							   {'message': "<h1>You are already logged in</h1>"})
+
+	if request.forms.get('username') == 'admin' and user.hash_password(request.forms.get('password')) == config["admin_hash"]:
+		response.set_cookie("login", cookies.give_cookie("admin"), max_age=cookies.expire_time)
+		redirect("/vote_count")
 	
 	validity = user.is_valid_login(request.forms.get('username'), request.forms.get('password'))
 	
@@ -294,6 +301,27 @@ def logout_post():
 	if cookie is not None:
 		cookies.remove_cookie(cookie)
 	redirect("/")
+
+@get('/vote_count')
+def vote_count_get():
+	user = process_cookie(request.get_cookie("login"))
+	if user is None or user.username != "admin":
+		return template.render("home_redirect.html",
+						{'message': """<h1>You can't view the vote count if you are not admin</h1>"""})
+	votes_dict = vote.vote_count()
+	votes_list = map(lambda x: (x, votes_dict[x][0], votes_dict[x][1]), votes_dict)
+	votes_list.sort(key = lambda x: x[1], reverse=True)
+
+	return template.render("vote_count.html", 
+					{'config': config, 'vote_count': votes_list})
+
+@get('/<something:path>')
+def admin_redir(something):
+	current_user = process_cookie(request.get_cookie("login"))
+	if current_user is not None and current_user.username == "admin":
+		redirect("/vote_count")
+	else:
+		abort(404)
 
 @get('/<something:path>/')
 def slash_redir_get(something):
