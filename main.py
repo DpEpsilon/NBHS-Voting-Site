@@ -121,10 +121,12 @@ def vote_get():
 				nominees[col_size:2*col_size],
 				nominees[2*col_size:]]
 	
-	return template.render("voting.html", {'config': config,
-										   'pages': pages, 'page': page,
-										   'nominees': nominees,
-										   'user': current_user})
+	return template.render("voting.html",
+						   {'config': config,
+							'pages': pages, 'page': page,
+							'nominees': nominees,
+							'csrf': csrf.get_csrf_key(current_user.userid),
+							'user': current_user})
 
 @post('/vote')
 def vote_post():
@@ -132,6 +134,11 @@ def vote_post():
 	if page not in pages:
 		abort(404)
 	current_user = process_cookie(request.get_cookie("login"))
+	given_csrf_key = request.forms.get('csrf')
+
+	if not csrf.check_csrf_key(current_user.userid, given_csrf_key):
+		abort(403, "A potential CSRF attack was detected. "
+			  "Please try again later.")
 	
 	if current_user is None:
 		redirect('/login?message=3')
