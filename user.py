@@ -77,6 +77,7 @@ def get_user(user):
 		cursor.execute("select userid, username, password, firstname, lastname "
 					   "from users where userid = ?", (user,))
 	elif isinstance(user, basestring):
+		user = user.lower()
 		cursor.execute("select userid, username, password, firstname, lastname "
 					   "from users where username = ?", (user,))
 	else:
