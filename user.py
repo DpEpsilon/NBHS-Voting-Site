@@ -167,6 +167,9 @@ def is_valid_login(username, password):
 	Checks if a username, password pair match.
 	Returns 0 if they do, 1 if pass doesn't match, 2 if username doesn't exist
 	"""
+	if username is None or password is None:
+		return None
+	
 	connection = database_engine.get_db_connection()
 	cursor = connection.cursor()
 
