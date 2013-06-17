@@ -1,5 +1,6 @@
 import sqlite3
 import database_engine
+import cgi
 
 import hashlib
 
@@ -136,8 +137,13 @@ def get_nominee_fields(userid):
 	cursor = connection.cursor()
 	cursor.execute("select field, submission from nominee_fields "
 				   "where userid = ?", (userid,))
-
-	return dict(cursor.fetchall())
+	nominee_fields = dict(cursor.fetchall())
+	for field in nominee_fields:
+		nominee_fields[field] =\
+			cgi.escape(nominee_fields[field])\
+			.strip().replace('\r\n', '<br>')
+		
+	return nominee_fields
 
 def get_nominators(userid):
 	connection = database_engine.get_db_connection()

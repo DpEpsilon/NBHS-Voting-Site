@@ -27,7 +27,7 @@
 				  <img class="nominee_photo" src="/static/photos/{! nominee.lastname !}, {! nominee.firstname !}.jpg">
 				  {% for field in nominee.student_info.nominee_fields %}
 				  <span style="font-size: 10pt" title="{! field !}">
-				  {! nominee.student_info.nominee_fields[field] !}
+				  {% safe nominee.student_info.nominee_fields[field] %}
 				  <span>
 				  {% end for %}
 				</div>
