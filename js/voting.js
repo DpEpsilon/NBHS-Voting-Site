@@ -22,7 +22,7 @@ function changed_vote(cb) {
 				boxes[i].disabled = true;
 			}
 		}
-		$('#submit_votes')[0].disabled = false;
+		//$('#submit_votes')[0].disabled = false;
 		$('.vote_counter').css('background-color','#beb')
 		$('.vote_counter').css('border-color','#ada')
 	} else {
@@ -31,7 +31,7 @@ function changed_vote(cb) {
 		for (var i = 0; i < boxes.length; i++) {
 			boxes[i].disabled = false;
 		}
-		$('#submit_votes')[0].disabled = true;
+		//$('#submit_votes')[0].disabled = true;
 		$('.vote_counter').css('background-color','#eee')
 		$('.vote_counter').css('border-color','#ddd')
 	}

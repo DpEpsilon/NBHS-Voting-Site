@@ -157,7 +157,7 @@ def vote_post():
 		if request.forms.get(str(n.userid)):
 			votes.append(n.userid)
 	
-	if len(votes) != config['num_votes']:
+	if len(votes) <= config['num_votes']:
 		redirect('/vote')
 
 	submissions.submit_votes(current_user.userid, votes)
